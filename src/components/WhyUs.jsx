@@ -39,6 +39,18 @@ const reasons = [
   },
 ]
 
+const ReasonCard = ({ r, isMobile }) => (
+  <div className={`flex items-start gap-4 border border-white/15 rounded-2xl p-6 transition-colors duration-200 ${isMobile ? 'w-[280px] flex-shrink-0 bg-white/10' : 'bg-white/10 hover:bg-white/15'}`}>
+    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-accent/20 text-accent flex items-center justify-center">
+      {r.icon}
+    </div>
+    <div>
+      <h3 className="text-lg font-semibold text-white mb-2">{r.title}</h3>
+      <p className="text-slate-300 text-sm leading-relaxed">{r.description}</p>
+    </div>
+  </div>
+);
+
 export default function WhyUs({ compact = false }) {
   if (compact) {
     return (
@@ -51,11 +63,11 @@ export default function WhyUs({ compact = false }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 pb-4 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {reasons.map((r) => (
             <div
               key={r.title}
-              className="flex items-start gap-4 bg-white/10 border border-white/15 rounded-xl p-4 hover:bg-white/15 transition-colors duration-200"
+              className="flex-shrink-0 w-[85vw] snap-center sm:w-[45vw] md:flex-shrink md:w-auto flex items-start gap-4 bg-white/10 border border-white/15 rounded-xl p-4 hover:bg-white/15 transition-colors duration-200"
             >
               <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-accent/20 text-accent flex items-center justify-center">
                 {r.icon}
@@ -72,7 +84,7 @@ export default function WhyUs({ compact = false }) {
   }
 
   return (
-    <section id="why-us" className="py-20 bg-secondary">
+    <section id="why-us" className="py-12 md:py-20 bg-secondary">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-14">
           <p className="text-accent font-semibold text-sm tracking-widest mb-2">WHY KrGo</p>
@@ -84,22 +96,38 @@ export default function WhyUs({ compact = false }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        {/* Desktop Grid */}
+        <div className="hidden md:grid grid-cols-2 gap-6 max-w-4xl mx-auto">
           {reasons.map((r) => (
-            <div
-              key={r.title}
-              className="flex items-start gap-4 bg-white/10 border border-white/15 rounded-2xl p-6 hover:bg-white/15 transition-colors duration-200"
-            >
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-accent/20 text-accent flex items-center justify-center">
-                {r.icon}
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-2">{r.title}</h3>
-                <p className="text-slate-300 text-sm leading-relaxed">{r.description}</p>
-              </div>
-            </div>
+            <ReasonCard key={r.title} r={r} isMobile={false} />
           ))}
         </div>
+
+        {/* Mobile Marquee */}
+        <div className="md:hidden relative max-w-[100vw] -mx-4 pb-6 overflow-hidden">
+          <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-secondary to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-secondary to-transparent z-10 pointer-events-none"></div>
+          <div className="flex overflow-hidden group">
+            <div className="flex w-max animate-slow-marquee group-hover:[animation-play-state:paused]">
+              <div className="flex gap-4 pr-4">
+                {reasons.map((r, idx) => <ReasonCard key={`r1-${idx}`} r={r} isMobile={true} />)}
+              </div>
+              <div className="flex gap-4 pr-4">
+                {reasons.map((r, idx) => <ReasonCard key={`r2-${idx}`} r={r} isMobile={true} />)}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <style>{`
+          @keyframes slow-marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+          }
+          .animate-slow-marquee {
+            animation: slow-marquee 25s linear infinite;
+          }
+        `}</style>
       </div>
     </section>
   )

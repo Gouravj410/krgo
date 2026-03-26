@@ -1,25 +1,10 @@
 import React, { useState } from 'react'
 import {
-  API_BASE_URL,
   CALL_URL,
   CONTACT_EMAIL,
   CONTACT_PHONE_DISPLAY,
-  LEADS_API_PATH,
   WHATSAPP_URL,
 } from '../config/siteConfig'
-
-const projectTypes = [
-  'Retail Shop',
-  'Salon / Beauty Parlour',
-  'Restaurant / Dhaba',
-  'Medical / Pharmacy',
-  'Gym / Fitness',
-  'Education / Tuition',
-  'Furniture / Hardware',
-  'Portfolio Website',
-  'College Project',
-  'Other',
-]
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', phone: '', projectType: '', message: '' })
@@ -36,7 +21,7 @@ export default function Contact() {
     } else if (!/^[6-9]\d{9}$/.test(form.phone.replace(/\s/g, ''))) {
       errs.phone = 'Enter a valid 10-digit Indian mobile number.'
     }
-    if (!form.projectType) errs.projectType = 'Please select your project type.'
+    if (!form.projectType) errs.projectType = 'Please enter your project type.'
     return errs
   }
 
@@ -53,36 +38,49 @@ export default function Contact() {
       setErrors(errs)
       return
     }
+    
     try {
       setSubmitting(true)
-      const response = await fetch(`${API_BASE_URL}${LEADS_API_PATH}`, {
-        method: 'POST',
-        headers: {
+
+      const templateParams = {
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        businessType: form.projectType.trim(),
+        message: form.message.trim(),
+      }
+
+      // Send via FormSubmit
+      const response = await fetch(`https://formsubmit.co/ajax/${CONTACT_EMAIL}`, {
+        method: "POST",
+        headers: { 
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
-          name: form.name.trim(),
-          phone: form.phone.trim(),
-          businessType: form.projectType.trim(),
-          message: form.message.trim(),
-        }),
-      })
+          _subject: "New Lead from KrGo Website",
+          _template: "table",
+          Name: templateParams.name,
+          Phone: templateParams.phone,
+          Business_Type: templateParams.businessType,
+          Message: templateParams.message || "No message provided."
+        })
+      });
 
-      const result = await response.json()
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || 'Failed to save your request')
+      if (!response.ok) {
+        throw new Error("Failed to send message through FormSubmit.");
       }
 
       setSubmitted(true)
     } catch (error) {
-      setSubmitError(error.message || 'Could not submit your request')
+      console.error('EmailJS Error:', error)
+      setSubmitError('Could not submit your request. Please try again or contact us directly.')
     } finally {
       setSubmitting(false)
     }
   }
 
   return (
-    <section id="contact" className="py-20 bg-white">
+    <section id="contact" className="py-12 md:py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-12 items-start">
         {/* Left: Info */}
         <div>
@@ -142,9 +140,9 @@ export default function Contact() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-secondary mb-2">We Got Your Request!</h3>
+              <h3 className="text-xl font-bold text-secondary mb-2">Success!</h3>
               <p className="text-gray-500 mb-4">
-                Thank you, <strong>{form.name}</strong>! We'll call or WhatsApp you within a few hours.
+                Your request has been sent successfully. We will contact you soon.
               </p>
               <button
                 onClick={() => {
@@ -205,20 +203,17 @@ export default function Contact() {
                 <label className="block text-sm font-medium text-secondary mb-1" htmlFor="projectType">
                   Project Type <span className="text-red-500">*</span>
                 </label>
-                <select
+                <input
                   id="projectType"
                   name="projectType"
+                  type="text"
                   value={form.projectType}
                   onChange={handleChange}
-                  className={`w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition bg-bg ${
-                    errors.projectType ? 'border-red-400 bg-red-50' : 'border-gray-200'
+                  placeholder="e.g. Retail Shop, Gym, etc."
+                  className={`w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition ${
+                    errors.projectType ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-bg'
                   }`}
-                >
-                  <option value="">Select your project type…</option>
-                  {projectTypes.map((b) => (
-                    <option key={b} value={b}>{b}</option>
-                  ))}
-                </select>
+                />
                 {errors.projectType && <p className="text-red-500 text-xs mt-1">{errors.projectType}</p>}
               </div>
 

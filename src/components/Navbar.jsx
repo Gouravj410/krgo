@@ -25,7 +25,7 @@ export default function Navbar() {
         scrolled ? 'bg-secondary shadow-lg' : 'bg-secondary/95 backdrop-blur-sm'
       }`}
     >
-      <nav className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <nav className="max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">

@@ -52,7 +52,7 @@ export default function ServiceDetailsPage() {
             ← Back to services
           </button>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10 mt-4">
-            <h1 className="text-3xl md:text-4xl font-extrabold text-secondary mb-4 text-center">{service.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-secondary mb-4 text-center">{service.heading || service.title}</h1>
             <p className="text-lg text-gray-600 leading-relaxed mb-8 max-w-3xl mx-auto text-center">{service.details}</p>
 
             <div className="card mb-8 max-w-3xl mx-auto text-left">
@@ -69,7 +69,7 @@ export default function ServiceDetailsPage() {
 
             <div className="flex flex-wrap justify-center gap-4">
               <button onClick={goToContact} className="btn-primary">
-                Get a Quote
+                {service.ctaText || "Start My Website"}
               </button>
               <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="btn-accent">
                 Chat on WhatsApp

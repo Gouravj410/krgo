@@ -88,7 +88,7 @@ function TestimonialCard({ t }) {
 
 export default function Testimonials() {
   return (
-    <section id="reviews" className="py-20 bg-bg overflow-hidden">
+    <section id="reviews" className="py-12 md:py-20 bg-bg overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-14">
         {/* Header */}
         <div className="text-center">
@@ -124,15 +124,15 @@ export default function Testimonials() {
 
       {/* Trust badges row */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="mt-8 flex flex-wrap justify-center gap-8 text-center">
+        <div className="mt-8 flex justify-between items-center text-center gap-2 sm:gap-8">
           {[
-            { value: '50+', label: 'Happy Clients' },
-            { value: '4.9★', label: 'Average Rating' },
+            { value: '15+', label: 'Happy Clients' },
+            { value: '4.7★', label: 'Average Rating' },
             { value: '100%', label: 'On-Time Delivery' },
           ].map((badge) => (
-            <div key={badge.label} className="flex flex-col items-center">
-              <span className="text-3xl font-bold text-primary">{badge.value}</span>
-              <span className="text-gray-500 text-sm mt-1">{badge.label}</span>
+            <div key={badge.label} className="flex flex-col items-center flex-1">
+              <span className="text-xl sm:text-3xl font-bold text-primary leading-tight">{badge.value}</span>
+              <span className="text-gray-500 text-[10px] sm:text-sm mt-1 whitespace-nowrap">{badge.label}</span>
             </div>
           ))}
         </div>

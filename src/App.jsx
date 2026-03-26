@@ -45,6 +45,7 @@ function HomePage() {
         <Contact />
       </main>
       <Footer />
+      <div className="md:hidden h-24 bg-secondary"></div>
       <WhatsAppFloat />
     </>
   )

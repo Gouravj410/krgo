@@ -2,77 +2,83 @@ import React from 'react'
 
 const plans = [
   {
-    name: 'Basic',
+    name: 'BASIC',
     price: '₹5,000',
-    desc: 'Perfect for getting started',
+    desc: 'Start your business online',
     features: [
-      '1-page website',
-      'Contact form',
-      'WhatsApp button',
-      'Mobile responsive',
-      '1 revision round',
+      'Professional website to attract local customers',
+      'Customers can contact you directly from your website',
+      'Mobile-friendly website (works on all devices)',
+      'Fast delivery (2–3 days)',
+      'Basic business information setup',
+      '1 free revision',
     ],
-    cta: 'Get Basic Plan',
+    cta: 'Start My Website',
     highlight: false,
   },
   {
-    name: 'Standard',
+    name: 'STANDARD',
     price: '₹10,000',
-    desc: 'Most popular for growing businesses',
+    desc: 'Get more customers and enquiries',
     features: [
-      '5-page website',
-      'Contact & enquiry form',
-      'Basic SEO setup',
-      'Google Maps integration',
-      'WhatsApp button',
-      'Mobile responsive',
-      '2 revision rounds',
+      'Everything in Basic',
+      'Your business appears on Google (basic visibility setup)',
+      'WhatsApp enquiry integration (instant customer contact)',
+      'Contact form to collect customer enquiries',
+      'Includes 2 free revisions to adjust your website',
+      'Better design with multiple sections/pages',
+      'Designed to increase customer enquiries',
     ],
-    cta: 'Get Standard Plan',
+    cta: 'Get My Business Online',
     highlight: true,
   },
   {
-    name: 'Premium',
+    name: 'PREMIUM',
     price: '₹20,000',
-    desc: 'Full online presence setup',
+    desc: 'Grow your business and dominate locally',
     features: [
       'Everything in Standard',
-      'Blog / news section',
-      'Advanced SEO',
-      'Google Business setup',
-      '3 months maintenance',
-      'Social media links',
-      'Unlimited revisions',
+      'Advanced SEO optimization (rank better on Google)',
+      'Google Maps integration (customers can find your location easily)',
+      'Google Business Profile setup',
+      'Includes 5 free revisions for full flexibility',
+      'Priority support (faster response)',
+      'Performance tracking (see how many people visit your site)',
+      'Complete setup so you don’t need to manage anything',
     ],
-    cta: 'Get Premium Plan',
+    cta: 'Book My Website',
     highlight: false,
   },
 ]
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="py-20 bg-white">
+    <section id="pricing" className="py-12 md:py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-14">
-          <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-2">Transparent Pricing</p>
-          <h2 className="section-title">Simple, Affordable Plans</h2>
+          <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-2">Smart Investment for Growth</p>
+          <h2 className="section-title">Get Your Business Online & Start Getting Customers</h2>
           <p className="section-subtitle">
-            No hidden charges. No confusing packages. Just pick what suits your business.
+            A one-time affordable investment with no hidden charges. Stop missing out on customers who are searching for you online.
           </p>
+          
+          <div className="mt-6 inline-flex text-center border border-accent/20 bg-accent/5 text-accent font-semibold px-4 py-2 rounded-full text-sm">
+            Offer valid for first 10 businesses
+          </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 items-start">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 items-start mb-16">
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`relative rounded-2xl border-2 p-8 flex flex-col ${
+              className={`relative rounded-2xl border-2 p-8 flex flex-col h-full ${
                 plan.highlight
                   ? 'border-primary bg-primary text-white shadow-2xl scale-105'
                   : 'border-gray-100 bg-white shadow-sm hover:shadow-md'
               } transition-shadow duration-200`}
             >
               {plan.highlight && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-max">
                   <span className="bg-accent text-white text-[10px] font-bold px-4 py-1.5 rounded-full shadow-sm uppercase tracking-widest">
                     Most Popular
                   </span>
@@ -87,21 +93,23 @@ export default function Pricing() {
                 <p className={`text-4xl font-extrabold ${plan.highlight ? 'text-white' : 'text-secondary'}`}>
                   {plan.price}
                 </p>
-                <p className={`text-sm mt-1 ${plan.highlight ? 'text-blue-100' : 'text-gray-400'}`}>one-time payment</p>
+                {plan.subtitle && (
+                  <p className={`text-sm font-semibold mt-2 ${plan.highlight ? 'text-yellow-300' : 'text-primary'}`}>{plan.subtitle}</p>
+                )}
               </div>
 
-              <ul className="space-y-3 mb-8 flex-1">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-center gap-3">
+              <ul className="space-y-4 mb-8 flex-1">
+                {plan.features.map((f, i) => (
+                  <li key={i} className="flex items-start gap-3">
                     <svg
-                      className={`w-5 h-5 flex-shrink-0 ${plan.highlight ? 'text-accent' : 'text-accent'}`}
+                      className={`w-5 h-5 flex-shrink-0 mt-0.5 ${plan.highlight ? 'text-accent' : 'text-accent'}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
-                    <span className={`text-sm ${plan.highlight ? 'text-blue-50' : 'text-gray-600'}`}>{f}</span>
+                    <span className={`text-sm leading-snug ${plan.highlight ? 'text-blue-50' : 'text-gray-600'}`}>{f}</span>
                   </li>
                 ))}
               </ul>
@@ -119,6 +127,8 @@ export default function Pricing() {
             </div>
           ))}
         </div>
+
+
       </div>
     </section>
   )
