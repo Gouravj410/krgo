@@ -1,6 +1,6 @@
 export const CONTACT_PHONE = "9325791196";
 export const CONTACT_PHONE_DISPLAY = "+91 93257 91196";
-export const CONTACT_EMAIL = "gouravjangid410@gmail.com";
+export const CONTACT_EMAIL = "krgo427@gmail.com";
 export const CALL_URL = `tel:+91${CONTACT_PHONE}`;
 
 export const WHATSAPP_NUMBER = `91${CONTACT_PHONE}`;

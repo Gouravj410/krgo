@@ -13,7 +13,7 @@
 
 ## Email Notifications
 
-- New lead notifications are sent to `gouravjangid410@gmail.com`.
+- New lead notifications are sent to `krgo427@gmail.com`.
 - Configure SMTP in `.env`:
   - `SMTP_HOST`
   - `SMTP_PORT`
