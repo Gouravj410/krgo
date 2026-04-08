@@ -48,3 +48,33 @@ export const sendLeadEmail = async (lead) => {
     text,
   });
 };
+
+export const sendWhatsAppBookingEmail = async (booking) => {
+  const transporter = buildTransport();
+  if (!transporter) {
+    console.warn("SMTP not configured. Skipping WhatsApp booking email notification.");
+    return;
+  }
+
+  const submittedAt = new Date().toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+  });
+
+  const text = [
+    "New WhatsApp Bot Booking",
+    "",
+    `Client Name: ${booking.name}`,
+    `Phone / Contact ID: ${booking.phone}`,
+    `Website Type Needed: ${booking.websiteType}`,
+    `Scheduled Time: ${booking.timeSlot}`,
+    `Scheduled Date: ${booking.dateLabel}`,
+    `Booking Submitted At: ${submittedAt}`,
+  ].join("\n");
+
+  await transporter.sendMail({
+    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    to: ADMIN_EMAIL,
+    subject: `New WhatsApp Booking: ${booking.name}`,
+    text,
+  });
+};
