@@ -30,8 +30,9 @@ const distPath = path.join(__dirname, "../../../dist");
 app.use(express.static(distPath));
 
 // Handle React routing, return all requests to React app
-app.get("*", (req, res, next) => {
-  if (req.url.startsWith("/api") || req.url.startsWith("/webhook")) {
+app.use((req, res, next) => {
+  // Only handle GET requests for React routing
+  if (req.method !== "GET" || req.originalUrl.startsWith("/api") || req.originalUrl.startsWith("/webhook")) {
     return next();
   }
   res.sendFile(path.join(distPath, "index.html"), (err) => {
