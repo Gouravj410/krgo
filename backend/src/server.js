@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import app from "./app.js";
-import { connectDB } from "./config/db.js";
 import { startWhatsAppBot, stopWhatsAppBot } from "./services/whatsappBot.js";
 
 dotenv.config();
@@ -23,7 +22,6 @@ process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 
 const startServer = async () => {
   try {
-    await connectDB();
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
