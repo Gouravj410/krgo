@@ -37,7 +37,12 @@ app.use((req, res, next) => {
       message: `Route not found: ${req.originalUrl}`,
     });
   }
-  res.sendFile(path.join(distPath, "index.html"));
+  res.sendFile(path.join(distPath, "index.html"), (err) => {
+    if (err) {
+      console.error("⚠️ Failed to serve index.html. Ensure frontend is built.", err.message);
+      res.status(500).send("Frontend build not found or failed to load.");
+    }
+  });
 });
 
 app.use((err, _req, res, _next) => {

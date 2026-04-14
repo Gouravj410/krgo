@@ -6,6 +6,15 @@ dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
+// Global error handlers to prevent server crashes from unhandled issues (e.g. Render Chromium lacking)
+process.on("uncaughtException", (error) => {
+  console.error("💥 Uncaught Exception:", error);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("💥 Unhandled Rejection at:", promise, "reason:", reason);
+});
+
 /**
  * Graceful shutdown — called on SIGINT / SIGTERM.
  * Stops the WhatsApp bot (destroys Puppeteer browser) before exiting
@@ -26,8 +35,12 @@ const startServer = async () => {
       console.log(`Server running on port ${PORT}`);
     });
 
-    // Start the WhatsApp auto-reply bot
-    startWhatsAppBot();
+    // Start the WhatsApp auto-reply bot safely
+    try {
+      startWhatsAppBot();
+    } catch (botErr) {
+      console.error("⚠️ WhatsApp Bot failed to start synchronously. Express server will continue running.", botErr);
+    }
   } catch (error) {
     console.error("Server startup failed:", error);
     process.exit(1);
