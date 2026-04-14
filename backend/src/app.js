@@ -26,28 +26,18 @@ app.post("/webhook", (req, res) => {
 });
 
 // Serve frontend static files
-const distPath = path.join(__dirname, "../../../dist");
+const distPath = path.join(__dirname, "../../dist");
 app.use(express.static(distPath));
 
 // Handle React routing, return all requests to React app
 app.use((req, res, next) => {
-  // Only handle GET requests for React routing
-  if (req.method !== "GET" || req.originalUrl.startsWith("/api") || req.originalUrl.startsWith("/webhook")) {
-    return next();
+  if (req.originalUrl.startsWith("/api") || req.originalUrl.startsWith("/webhook") || req.originalUrl.startsWith("/health")) {
+    return res.status(404).json({
+      success: false,
+      message: `Route not found: ${req.originalUrl}`,
+    });
   }
-  res.sendFile(path.join(distPath, "index.html"), (err) => {
-    if (err) {
-      // If index.html not found, fall back to 404
-      next();
-    }
-  });
-});
-
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: `Route not found: ${req.originalUrl}`,
-  });
+  res.sendFile(path.join(distPath, "index.html"));
 });
 
 app.use((err, _req, res, _next) => {
