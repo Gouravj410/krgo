@@ -20,8 +20,7 @@ process.on("unhandledRejection", (reason, promise) => {
  * so nodemon restarts don't leave zombie Chrome processes.
  */
 async function gracefulShutdown(signal) {
-  console.log(`\n${signal} received — shutting down gracefully...`);
-  await stopWhatsAppBot();
+  console.log(`\n${signal} received  shutting down gracefully...`);
   process.exit(0);
 }
 
