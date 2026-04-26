@@ -1,5 +1,5 @@
 import React from 'react'
-import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_DISPLAY, WHATSAPP_URL } from '../config/siteConfig'
+import { CONTACT_EMAIL } from '../config/siteConfig'
 
 const quickLinks = [
   { label: 'Services', href: '#services' },

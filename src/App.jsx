@@ -11,7 +11,6 @@ import WhyUs from './components/WhyUs'
 import Testimonials from './components/Testimonials'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
-import WhatsAppFloat from './components/WhatsAppFloat'
 import ServiceDetailsPage from './pages/ServiceDetailsPage'
 
 
@@ -46,7 +45,6 @@ function HomePage() {
       </main>
       <Footer />
       <div className="md:hidden h-24 bg-secondary"></div>
-      <WhatsAppFloat />
     </>
   )
 }

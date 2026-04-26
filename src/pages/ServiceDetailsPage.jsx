@@ -3,9 +3,7 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import WhatsAppFloat from "../components/WhatsAppFloat";
 import { servicesBySlug } from "../data/servicesData";
-import { CALL_URL, WHATSAPP_URL } from "../config/siteConfig";
 
 export default function ServiceDetailsPage() {
   const { slug } = useParams();
@@ -38,7 +36,6 @@ export default function ServiceDetailsPage() {
           </div>
         </main>
         <Footer />
-        <WhatsAppFloat />
       </>
     );
   }
@@ -71,12 +68,6 @@ export default function ServiceDetailsPage() {
               <button onClick={goToContact} className="btn-primary">
                 {service.ctaText || "Start My Website"}
               </button>
-              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="btn-accent">
-                Chat on WhatsApp
-              </a>
-              <a href={CALL_URL} className="btn-outline">
-                Call Now
-              </a>
             </div>
           </div>
         </section>

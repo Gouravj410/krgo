@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import app from "./app.js";
-import { startWhatsAppBot, stopWhatsAppBot } from "./services/whatsappBot.js";
 
 dotenv.config();
 
@@ -26,25 +25,6 @@ async function gracefulShutdown(signal) {
   process.exit(0);
 }
 
-process.on("SIGINT",  () => gracefulShutdown("SIGINT"));
-process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
-
-const startServer = async () => {
-  try {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-
-    // Start the WhatsApp auto-reply bot safely
-    try {
-      startWhatsAppBot();
-    } catch (botErr) {
-      console.error("⚠️ WhatsApp Bot failed to start synchronously. Express server will continue running.", botErr);
-    }
-  } catch (error) {
-    console.error("Server startup failed:", error);
-    process.exit(1);
-  }
-};
-
-startServer();
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

@@ -1,13 +1,8 @@
 import React, { useState } from 'react'
-import {
-  CALL_URL,
-  CONTACT_EMAIL,
-  CONTACT_PHONE_DISPLAY,
-  WHATSAPP_URL,
-} from '../config/siteConfig'
+import { CONTACT_EMAIL } from '../config/siteConfig'
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', phone: '', projectType: '', message: '' })
+  const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [errors, setErrors] = useState({})
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -16,12 +11,9 @@ export default function Contact() {
   const validate = () => {
     const errs = {}
     if (!form.name.trim()) errs.name = 'Please enter your name.'
-    if (!form.phone.trim()) {
-      errs.phone = 'Please enter your phone number.'
-    } else if (!/^[6-9]\d{9}$/.test(form.phone.replace(/\s/g, ''))) {
-      errs.phone = 'Enter a valid 10-digit Indian mobile number.'
+    if (!form.email.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) {
+      errs.email = 'Please enter a valid email address.'
     }
-    if (!form.projectType) errs.projectType = 'Please enter your project type.'
     return errs
   }
 
@@ -42,13 +34,6 @@ export default function Contact() {
     try {
       setSubmitting(true)
 
-      const templateParams = {
-        name: form.name.trim(),
-        phone: form.phone.trim(),
-        businessType: form.projectType.trim(),
-        message: form.message.trim(),
-      }
-
       // Send via FormSubmit
       const response = await fetch(`https://formsubmit.co/ajax/${CONTACT_EMAIL}`, {
         method: "POST",
@@ -57,12 +42,11 @@ export default function Contact() {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          _subject: "New Lead from KrGo Website",
+          _subject: "New Contact from KrGo Website",
           _template: "table",
-          Name: templateParams.name,
-          Phone: templateParams.phone,
-          Business_Type: templateParams.businessType,
-          Message: templateParams.message || "No message provided."
+          Name: form.name.trim(),
+          Email: form.email.trim(),
+          Message: form.message.trim() || "No message provided."
         })
       });
 
