@@ -25,6 +25,34 @@ app.post("/webhook", (req, res) => {
   res.status(200).json({ success: true });
 });
 
+// App Leads route: forwards contact form details to Google Sheets Webhook
+app.post("/api/leads", async (req, res) => {
+  try {
+    const sheetWebhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+    if (!sheetWebhookUrl) {
+      console.error("GOOGLE_SHEETS_WEBHOOK_URL is not set");
+      return res.status(500).json({ success: false, message: "Server misconfiguration" });
+    }
+    
+    const response = await fetch(sheetWebhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(req.body)
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to forward to Google Sheets");
+    }
+
+    res.status(200).json({ success: true, message: "Lead saved successfully" });
+  } catch (error) {
+    console.error("Error saving lead:", error);
+    res.status(500).json({ success: false, message: "Failed to save lead" });
+  }
+});
+
 // Serve frontend static files
 const distPath = path.join(__dirname, "../../dist");
 app.use(express.static(distPath));

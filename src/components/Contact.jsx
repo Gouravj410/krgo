@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { CONTACT_EMAIL } from '../config/siteConfig'
+import { API_BASE_URL, LEADS_API_PATH } from '../config/siteConfig'
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' })
+  const [form, setForm] = useState({ name: '', phone: '', projectType: '', callRequestTime: '', message: '' })
   const [errors, setErrors] = useState({})
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -11,8 +11,14 @@ export default function Contact() {
   const validate = () => {
     const errs = {}
     if (!form.name.trim()) errs.name = 'Please enter your name.'
-    if (!form.email.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) {
-      errs.email = 'Please enter a valid email address.'
+    if (!form.phone.trim() || !/^\d{10}$/.test(form.phone)) {
+      errs.phone = 'Please enter a valid 10-digit phone number.'
+    }
+    if (!form.projectType.trim()) {
+      errs.projectType = 'Please specify the project type.'
+    }
+    if (!form.callRequestTime) {
+      errs.callRequestTime = 'Please select a preferred call time.'
     }
     return errs
   }
@@ -34,24 +40,27 @@ export default function Contact() {
     try {
       setSubmitting(true)
 
-      // Send via FormSubmit
-      const response = await fetch(`https://formsubmit.co/ajax/${CONTACT_EMAIL}`, {
+      // Send to Backend API which syncs with Google Sheets
+      const endpoint = `${API_BASE_URL}${LEADS_API_PATH}`;
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { 
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          _subject: "New Contact from KrGo Website",
-          _template: "table",
+          // Maps seamlessly to the unchanged Google Apps Script structure
           Name: form.name.trim(),
-          Email: form.email.trim(),
-          Message: form.message.trim() || "No message provided."
+          Phone: form.phone.trim(),
+          WebsiteType: form.projectType.trim(),
+          TimeSlot: form.callRequestTime,
+          DateLabel: form.message.trim() || "No message provided.",
+          Timestamp: new Date().toLocaleString()
         })
       });
 
       if (!response.ok) {
-        throw new Error("Failed to send message through FormSubmit.");
+        throw new Error("Failed to send message to the server.");
       }
 
       setSubmitted(true)
@@ -74,18 +83,35 @@ export default function Contact() {
             Fill in the form and we'll get back to you within a few hours. No commitment required — just a friendly chat about your business.
           </p>
 
-          <div className="space-y-5">
-
-
-            <div className="flex items-center gap-4 p-4 bg-bg rounded-xl border border-gray-100">
-              <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+          <div className="space-y-6 mt-8 hidden md:block">
+            <h3 className="text-secondary font-bold text-lg">What happens next?</h3>
+            <div className="flex gap-4 items-start">
+              <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-primary font-bold text-sm">1</span>
               </div>
               <div>
-                <p className="text-xs text-gray-400 font-medium">Email us</p>
-                <a href={`mailto:${CONTACT_EMAIL}`} className="text-secondary font-semibold hover:text-primary transition-colors">
-                  {CONTACT_EMAIL}
-                </a>
+                <h4 className="text-secondary font-semibold">We schedule a call</h4>
+                <p className="text-sm text-gray-500 mt-1">We'll reach out at your requested time to understand your exact needs.</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-4 items-start">
+              <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-primary font-bold text-sm">2</span>
+              </div>
+              <div>
+                <h4 className="text-secondary font-semibold">Get a custom strategy</h4>
+                <p className="text-sm text-gray-500 mt-1">We'll provide a free proposal and a clear timeline for your project.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start">
+              <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-primary font-bold text-sm">3</span>
+              </div>
+              <div>
+                <h4 className="text-secondary font-semibold">Launch & Scale</h4>
+                <p className="text-sm text-gray-500 mt-1">We build your solution and help your business grow effortlessly.</p>
               </div>
             </div>
           </div>
@@ -107,7 +133,7 @@ export default function Contact() {
               <button
                 onClick={() => {
                   setSubmitted(false)
-                  setForm({ name: '', phone: '', projectType: '', message: '' })
+                  setForm({ name: '', phone: '', projectType: '', callRequestTime: '', message: '' })
                 }}
                 className="text-primary font-medium hover:underline"
               >
@@ -118,52 +144,85 @@ export default function Contact() {
             <form onSubmit={handleSubmit} noValidate className="space-y-5">
               <h3 className="text-xl font-bold text-secondary mb-1">Get a Free Consultation</h3>
               <p className="text-gray-400 text-sm mb-4">We'll call you back within 2 hours.</p>
-                  onChange={handleChange}
-                  placeholder="e.g. Ramesh Sharma"
-                  className={`w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition ${
-                    errors.name ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-bg'
-                  }`}
-                />
-                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {/* Name */}
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-1" htmlFor="name">
+                    Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={form.name}
+                    onChange={handleChange}
+                    placeholder="e.g. Ramesh Sharma"
+                    className={`w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition ${
+                      errors.name ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-bg'
+                    }`}
+                  />
+                  {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-1" htmlFor="phone">
+                    Phone Number <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    value={form.phone}
+                    onChange={handleChange}
+                    placeholder="e.g. 9876543210"
+                    maxLength={10}
+                    className={`w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition ${
+                      errors.phone ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-bg'
+                    }`}
+                  />
+                  {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                </div>
               </div>
 
-              {/* Phone */}
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-1" htmlFor="phone">
-                  Phone Number <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  value={form.phone}
-                  onChange={handleChange}
-                  placeholder="e.g. 9876543210"
-                  maxLength={10}
-                  className={`w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition ${
-                    errors.phone ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-bg'
-                  }`}
-                />
-                {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
-              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {/* Project Type */}
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-1" htmlFor="projectType">
+                    Project Type <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="projectType"
+                    name="projectType"
+                    type="text"
+                    value={form.projectType}
+                    onChange={handleChange}
+                    placeholder="e.g. Retail Shop, Gym, etc."
+                    className={`w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition ${
+                      errors.projectType ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-bg'
+                    }`}
+                  />
+                  {errors.projectType && <p className="text-red-500 text-xs mt-1">{errors.projectType}</p>}
+                </div>
 
-              {/* Project Type */}
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-1" htmlFor="projectType">
-                  Project Type <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="projectType"
-                  name="projectType"
-                  type="text"
-                  value={form.projectType}
-                  onChange={handleChange}
-                  placeholder="e.g. Retail Shop, Gym, etc."
-                  className={`w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition ${
-                    errors.projectType ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-bg'
-                  }`}
-                />
-                {errors.projectType && <p className="text-red-500 text-xs mt-1">{errors.projectType}</p>}
+                {/* Call Request Time */}
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-1" htmlFor="callRequestTime">
+                    Call Request Time <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="callRequestTime"
+                    name="callRequestTime"
+                    type="datetime-local"
+                    value={form.callRequestTime}
+                    onChange={handleChange}
+                    className={`w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition ${
+                      errors.callRequestTime ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-bg'
+                    }`}
+                  />
+                  {errors.callRequestTime && <p className="text-red-500 text-xs mt-1">{errors.callRequestTime}</p>}
+                </div>
               </div>
 
               <div>
